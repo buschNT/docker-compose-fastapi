@@ -1,0 +1,19 @@
+version: "3.7"
+
+services:
+  fastapi:
+    image: "${FASTAPI_IMAGE_NAME:-fastapi}:${FASTAPI_IMAGE_TAG:-production}"
+    build:
+      context: fastapi
+      dockerfile: Dockerfile
+      target: ${FASTAPI_BUILD_TARGET:-production}
+    ports:
+      - "8001:8001"
+    environment:
+      FASTAPI_IMAGE_NAME: $FASTAPI_IMAGE_NAME
+      FASTAPI_IMAGE_TAG: $FASTAPI_IMAGE_TAG
+      FASTAPI_BUILD_TARGET: $FASTAPI_BUILD_TARGET
+    volumes:
+      - ./fastapi/src:/src
+    command: >
+      sh -c "uvicorn main:app --host 0.0.0.0 --port 8001 --reload"
