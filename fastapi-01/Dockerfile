@@ -20,8 +20,8 @@ ENV PATH="/opt/venv/bin:$PATH"
 COPY --from=requirement /requirements.txt /requirements.txt
 RUN pip install -r requirements.txt
 
-# development
-FROM base AS development
+# fastapi
+FROM base AS fastapi
 
 COPY --from=builder /opt/venv /opt/venv
 
@@ -34,7 +34,9 @@ ENV PYTHONUNBUFFERED 1
 COPY src /src
 WORKDIR /src
 
-# RUN useradd appuser && chown -R appuser /src
-# USER appuser
+RUN adduser -D user && chown -R user /src
+USER user
 
 EXPOSE 8000
+
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
